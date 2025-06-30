@@ -1,7 +1,7 @@
 # MCP - Model Context Protocol
-Model Context Protocol - Overview, how to secure and exmaples
+Model Context Protocol - Overview, Security Risks, How to secure and examples
 
-### What is Model Context Protocol (MCP)?
+## What is Model Context Protocol (MCP)?
 
 As a result of the emergence of AI agents and RAG-based applications in recent years, there’s an increasing demand for customizing Large Language Models (LLMs) by integrating with external resources (e.g. RAG-based systems) and tools (e.g. Agent-based systems). This enhances LLMs’ existing capabilities by incorporating external knowledge and enabling autonomous task execution.
 
@@ -83,7 +83,7 @@ When a user interacts with a host application (an AI app) that supports MCP, sev
  * Use Streamable HTTP for scenarios requiring HTTP compatibility
  * Consider security implications including authentication and authorization
 
-## Security Risks and Considerations for MCP
+### Security Risks and Considerations for MCP
 
 The **security of a Model Context Protocol (MCP)** implementation is critical, especially when you’re handling:
 
