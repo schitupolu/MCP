@@ -1,4 +1,4 @@
-# MCP
+# MCP - Model Context Protocol
 Model Context Protocol - Overview, how to secure and exmaples
 
 ### What is Model Context Protocol (MCP)?
