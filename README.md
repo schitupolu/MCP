@@ -32,4 +32,28 @@ This separation of concerns allows for modular, composable systems where each se
 
 The **Model Context Protocol (MCP)** addresses challenge by providing a standardized way for LLMs to connect with external data sources and tools—essentially a “universal remote” for AI apps. Released by Anthropic as an open-source protocol, MCP builds on existing function calling by eliminating the need for custom integration between LLMs and other apps. This means developers can build more capable, context-aware applications without reinventing the wheel for each combination of AI model and external system.
 
-![MCP Architecture](/images/MCP_Architecture.png)
+### MCP Core Components :
+
+![MCP Core Components](/images/MCP_core_components.png)
+
+1. **Host application**: LLMs that interact with users and initiate connections. This includes Claude Desktop, AI-enhanced IDEs like Cursor, and standard web-based LLM chat interfaces.
+2. **MCP client**: Integrated within the host application to handle connections with MCP servers, translating between the host’s requirements and the Model Context Protocol. Clients are built into host applications, like the MCP client inside Claude Desktop.
+3. **MCP server**: Adds context and capabilities, exposing specific functions to AI apps through MCP. Each standalone server typically focuses on a specific integration point, like GitHub for repository access or a PostgreSQL for database operations.
+4. **Transport layer**: The communication mechanism between clients and servers. MCP supports two primary transport methods:
+  * **STDIO (Standard Input/Output)**: Mainly local integrations where the server runs in the same environment as the client.
+    * Uses standard input/output for communication
+    * Ideal for local processes
+  * **HTTP+SSE (Server-Sent Events)**: Remote connections, with HTTP for client requests and SS for server responses and streaming.
+    * Uses HTTP with optional Server-Sent Events for streaming
+    * HTTP POST for client-to-server messages
+
+All communication in MCP uses JSON-RPC 2.0 as the underlying message standard, providing a standardized structure for requests, responses, and notifications.
+
+### How MCP works
+
+When a user interacts with a host application (an AI app) that supports MCP, several processes occur behind the scenes to enable quick and seamless communication between the AI and external systems. Let’s take a closer look at what happens when a user asks Claude Desktop to perform a task that invokes tools outside the chat window.
+
+#### Protocol handshake
+1.  **Initial connection**: When an MCP client (like Claude Desktop) starts up, it connects to the configured MCP servers on your device.
+2.  **Capability discovery**: The client asks each server "What capabilities do you offer?" Each server responds with its available tools, resources, and prompts.
+3.  **Registration**: The client registers these capabilities, making them available for the AI to use during your conversation.
