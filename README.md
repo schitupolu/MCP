@@ -57,6 +57,8 @@ The **Model Context Protocol (MCP)** addresses challenge by providing a standard
     * Uses HTTP with optional Server-Sent Events for streaming
     * HTTP POST for client-to-server messages
 
+> **_NOTE:_**  MCP has evolved and now supports remote access transports: streamable-http and sse. Server-Sent Events (SSE) has been deprecated in favor of Streamable HTTP in the latest MCP specification but is still supported for backwards compatibility. Both of these two transports allow for running MCP servers remotely.
+
 All communication in MCP uses JSON-RPC 2.0 as the underlying message standard, providing a standardized structure for requests, responses, and notifications.
 
 ### How MCP works
