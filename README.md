@@ -270,3 +270,80 @@ Financial applications demand high availability and fault tolerance:
 * **No enterprise-grade SLAs**: MCP currently offers no formal uptime or latency guarantees, which financial regulators expect for critical systems.
 * **No offline fallback**: MCP is heavily network-dependent, meaning operations fail without a stable connection.
   - Example: A branch-based mortgage approval system using MCP would stall during any connectivity loss, disrupting customer service.
+
+#### Why these matters
+
+In sectors like financial services, these limitations are more than technical hiccups – they represent serious operational and regulatory risks:
+
+* **Retail banking**: Any failure in auditability or access control can result in fines or reputational damage.
+* **Asset management**: Recommendations must align with investor suitability and fiduciary standards – hard to prove without robust traceability.
+* **Insurance**: MCP’s lack of formal controls could compromise compliance with Solvency II or FCA fair treatment guidelines.
+* **Payments**: Data residency and encryption gaps directly violate PCI DSS and PSD2.
+
+### Security considerations
+
+MCP’s OAuth implementation using HTTP+SSE transport servers exhibits the same risks as standard OAuth flows. Developers should be vigilant about open redirect vulnerabilities, properly secure tokens, and implement PKCE for all authorization code flows.
+
+The current MCP authorization specification incorporates a subset of OAuth 2.1. This means that the core concerns remain unchanged, and familiarity with common OAuth misconfigurations can help developers avoid security gaps.
+
+Human-in-the-loop design is a critical element in protecting MCP server users. Clients must request explicit permission from the user before accessing tools or resources, placing an important checkpoint against automated exploits. However, this protection depends on clear permission prompts that help users make informed decisions—and a transparent understanding of the proposed scopes.
+
+This responsibility largely falls on server developers, who should strictly follow the principle of least privilege. Ideally, MCP servers will request only the minimum access necessary for their functionality. This ensures servers aren’t accidentally exposed to sensitive data while strengthening resilience against supply chain attacks that leverage unsecured connections between different resources.
+
+#### 1.     Transport security
+
+* Use TLS for remote connections
+* Validate connection origins
+* Implement authentication when needed
+
+#### 2.     Message validation
+
+* Validate all incoming messages
+* Sanitize inputs
+* Check message size limits
+* Verify JSON-RPC format
+
+#### 3.     Resource protection
+
+* Implement access controls
+* Validate resource paths
+* Monitor resource usage
+* Rate limit requests
+
+#### 4.     Error handling
+
+* Don’t leak sensitive information
+* Log security-relevant errors
+* Implement proper cleanup
+* Handle DoS scenarios​
+
+### Security Best Practices for MCP
+
+| Layer | Best Practice |
+| --- | --- |
+| Redis/DB | Use TLS, AUTH, private networking, encrypted storage, TTL |
+| API Authentication | Implement OAuth, API keys, or JWT to protect endpoints |
+| Prompt Sanitization | Validate and sanitize all user inputs before passing to models |
+| Guardrails/Filters | Use libraries like Rebuff, Guardrails AI for prompt safety |
+| Key Management | Store secrets in GCP Secret Manager, AWS Secrets Manager, etc. |
+| Data Compliance | Anonymize PII, respect GDPR/CCPA retention and consent requirements |
+| Logging | Never log sensitive content or API keys |
+| Rate Limiting | Protect endpoints from flooding attacks |
+
+### Sanitize Data before sending to a LLM in MCP
+
+**Sanitizing data before sending it to an LLM in a Model Context Protocol (MCP)** setup protects against:
+
+* **Prompt injection**
+* **Sensitive data leaks**
+* **Adversarial inputs**
+* **Unintentional context drift**
+
+#### What to Sanitize in MCP Before LLM Calls
+
+| Element | Why Sanitize It? |
+| --- | --- |
+| User Inputs | Prevent prompt injection, offensive content, malformed queries |
+| Conversation History (Context) | Avoid cascading malicious inputs or sensitive data leaks |
+| External API Data | Prevent injecting untrusted or malformed API responses |
+| Metadata | Avoid leaking internal system info (API keys, IDs, etc) |
