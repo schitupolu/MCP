@@ -347,3 +347,117 @@ This responsibility largely falls on server developers, who should strictly foll
 | Conversation History (Context) | Avoid cascading malicious inputs or sensitive data leaks |
 | External API Data | Prevent injecting untrusted or malformed API responses |
 | Metadata | Avoid leaking internal system info (API keys, IDs, etc) |
+
+#### How to Sanitize Data Before Sending to an LLM
+
+##### 1. Strip Malicious Prompt Injection Patterns
+
+Remove dangerous phrases or patterns known to hijack prompts.
+
+**Example risky patterns:**
+
+* Ignore previous instructions
+* You are now a helpful assistant
+* Forget everything before this
+
+**Python Example:**
+
+    import re
+
+    def sanitize_input(text):
+
+        dangerous_patterns = [
+
+            r'ignore (all )?(previous|earlier) instructions',
+
+            r'you are now an? (.*)',
+
+            r'forget everything before this',
+
+            r'delete all previous memory',
+
+        ]
+
+        for pattern in dangerous_patterns:
+
+            text = re.sub(pattern, '[REMOVED]', text, flags=re.IGNORECASE)
+
+        return text
+
+##### 2. Validate and Clean User Inputs
+
+* Enforce max length limits
+* Remove control characters and non-printable bytes
+* Strip HTML/JS scripts
+
+**Example:**
+
+    def clean_user_input(text, max_length=2000):
+
+        text = re.sub(r'<[^>]*>', '', text)  # remove HTML tags
+
+        text = re.sub(r'[^\x20-\x7E]+', ' ', text)  # keep printable ASCII
+
+        text = text.strip()
+
+        if len(text) > max_length:
+
+            text = text[:max_length]
+
+        return text
+
+##### 3. Sanitize External API Data Before Including in Context
+
+If your LLM fetches weather/news/data via external APIs — those responses should be:
+
+* Escaped
+* Validated against schema
+* Cleansed of risky patterns
+
+**Example:**
+
+    def sanitize_external_data(data):
+
+        if not isinstance(data, str):
+
+            return str(data)
+
+        return clean_user_input(data)
+
+##### 4. Mask or Remove PII / Sensitive Info
+
+If you don’t need PII in the prompt, mask it.
+
+**Example (mask emails, phone numbers):**
+
+    def mask_sensitive_info(text):
+
+        text = re.sub(r'[\w\.-]+@[\w\.-]+', '[EMAIL]', text)
+
+        text = re.sub(r'\b\d{10}\b', '[PHONE]', text)
+
+        return text
+
+##### 5. Use a Guardrails Framework
+
+Integrating a tool like [Rebuff](https://github.com/IntuitionMachines/rebuff) or [Guardrails AI](https://github.com/ShreyaR/guardrails) can automatically detect prompt injections and offensive content.
+
+**Example with Rebuff:**
+
+    from rebuff import Rebuff
+
+    guard = Rebuff()
+
+    result = guard.check_prompt_injection(user_input)
+
+    if result["is_injection"]:
+
+        raise ValueError("Potential prompt injection detected.")
+
+
+### Reference(s):
+
+* [https://modelcontextprotocol.io/introduction](https://modelcontextprotocol.io/introduction)
+* [https://www.descope.com/learn/post/mcp](https://www.descope.com/learn/post/mcp)
+* [https://medium.com/aimonks/model-context-protocol-mcp-key-limitations-for-regulated-industries-fb351cfae1a1](https://medium.com/aimonks/model-context-protocol-mcp-key-limitations-for-regulated-industries-fb351cfae1a1)
+* [https://www.theregister.com/2025/06/18/asana\_mcp\_server\_bug/](https://www.theregister.com/2025/06/18/asana_mcp_server_bug/)
