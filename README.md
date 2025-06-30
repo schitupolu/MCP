@@ -32,6 +32,16 @@ This separation of concerns allows for modular, composable systems where each se
 
 The **Model Context Protocol (MCP)** addresses challenge by providing a standardized way for LLMs to connect with external data sources and tools—essentially a “universal remote” for AI apps. Released by Anthropic as an open-source protocol, MCP builds on existing function calling by eliminating the need for custom integration between LLMs and other apps. This means developers can build more capable, context-aware applications without reinventing the wheel for each combination of AI model and external system.
 
+![MCP Learning Center](/images/MCP_learning_center.png) 
+
+**MCP defines three core primitives that servers can implement**:
+
+**Tools**: Model-controlled functions that LLMs can invoke (like API calls, computations)
+
+**Resources**: Application-controlled data that provides context (like file contents, database records)
+
+**Prompts**: User-controlled templates for LLM interactions
+
 ### MCP Core Components :
 
 ![MCP Core Components](/images/MCP_core_components.png)
@@ -57,3 +67,54 @@ When a user interacts with a host application (an AI app) that supports MCP, sev
 1.  **Initial connection**: When an MCP client (like Claude Desktop) starts up, it connects to the configured MCP servers on your device.
 2.  **Capability discovery**: The client asks each server "What capabilities do you offer?" Each server responds with its available tools, resources, and prompts.
 3.  **Registration**: The client registers these capabilities, making them available for the AI to use during your conversation.
+
+![MCP Workflow](/images/MCP_workflow.png)
+
+### Best practices
+
+#### Transport selection
+
+*Local communication*
+ 1. Use stdio transport for local processes
+ 2. Efficient for same-machine communication
+ 3. Simple process management
+    
+*Remote communication*
+ * Use Streamable HTTP for scenarios requiring HTTP compatibility
+ * Consider security implications including authentication and authorization
+
+## Security Risks and Considerations for MCP
+
+The **security of a Model Context Protocol (MCP)** implementation is critical, especially when you’re handling:
+
+1. **User data**
+2. **Conversation history**
+3. **Potentially sensitive model responses**
+4. **External API integration data**
+5. **Long-lived or persistent memory**
+
+And since most MCP setups today are custom — built on top of frameworks like LangChain, FastAPI, Redis, OpenAI APIs — the security depends entirely on **how well you design and enforce safeguards across your context management lifecycle**.
+
+### Is MCP Secure by Default?
+
+**No.**
+
+Because MCP is typically **custom-built**, its security is entirely dependent on how well your architecture, context storage, API authentication, and data handling practices are implemented.
+
+If you treat it as a first-class data and privacy boundary and apply solid security engineering practices — it can be
+
+### Top 10 Security Risks in MCP
+
+![MCP Security Risks](/images/MCP_Security_Risks.png)
+
+### Security Risks in MCP Implementations
+
+| Risk Category | Examples |
+| --- | --- |
+| Data Leakage | Exposing user conversations to other users or systems |
+| Unauthorized Access | Redis DB or context store accessible without authentication |
+| Injection Risks | Unvalidated inputs causing prompt injection (prompt hacking) |
+| Token/Key Exposure | OpenAI API keys or external API credentials leaking |
+| Context Integrity Risks | Tampered context data leading to unsafe or manipulated responses |
+| Privacy Compliance Issues | Storing sensitive PII or regulated data without consent/protection |
+| Denial of Service (DoS) | Malicious users flooding context storage or API endpoints |
