@@ -11,3 +11,7 @@ As a result of the emergence of AI agents and RAG-based applications in recent y
 * Reduce duplicate development effort since a single MCP server implementation works with multiple MCP clients.
 * Avoid vendor lock-in by providing flexibility to switch between LLM providers, since the LLM is no longer tightly coupled with the agentic system.
 * Speed up the development process significantly by enabling rapid creation of workable products.
+
+### MCP Architecture : ![Alt](/images/MCP_Architecture.png)
+
+![MCP Architecture](/images/MCP_Architecture.png)
