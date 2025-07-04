@@ -463,3 +463,4 @@ Integrating a tool like [Rebuff](https://github.com/IntuitionMachines/rebuff) or
 * [https://www.descope.com/learn/post/mcp](https://www.descope.com/learn/post/mcp)
 * [https://medium.com/aimonks/model-context-protocol-mcp-key-limitations-for-regulated-industries-fb351cfae1a1](https://medium.com/aimonks/model-context-protocol-mcp-key-limitations-for-regulated-industries-fb351cfae1a1)
 * [https://www.theregister.com/2025/06/18/asana\_mcp\_server\_bug/](https://www.theregister.com/2025/06/18/asana_mcp_server_bug/)
+* https://cloud.google.com/blog/topics/developers-practitioners/build-and-deploy-a-remote-mcp-server-to-google-cloud-run-in-under-10-minutes
